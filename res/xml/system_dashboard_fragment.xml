@@ -54,6 +54,7 @@
         android:fragment="com.android.settings.inputmethod.TrackpadSettings"
         settings:controller="com.android.settings.inputmethod.TrackpadSettingsController"/>
 
+    <!--
     <Preference
         android:key="gesture_settings"
         android:title="@string/gesture_preference_title"
@@ -61,6 +62,7 @@
         android:order="-250"
         android:fragment="com.android.settings.gestures.GestureSettings"
         settings:controller="com.android.settings.gestures.GesturesSettingPreferenceController"/>
+    -->
 
     <Preference
         android:key="date_time_settings"
@@ -81,6 +83,7 @@
                 android:targetClass="@string/additional_system_update_menu"/>
     </Preference>
 
+    <!--
     <Preference
         android:key="system_update_settings"
         android:title="@string/system_update_settings_list_item_title"
@@ -91,6 +94,7 @@
         settings:controller="com.android.settings.system.SystemUpdatePreferenceController">
         <intent android:action="android.settings.SYSTEM_UPDATE_SETTINGS"/>
     </Preference>
+    -->
 
     <Preference
         android:key="system_multiuser"

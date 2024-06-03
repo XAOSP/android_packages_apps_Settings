@@ -35,13 +35,12 @@
         android:title="@string/twilight_mode_location_off_dialog_message"
         settings:controller="com.android.settings.display.TwilightLocationPreferenceController"/>
 
-    <DropDownPreference
+    <ListPreference
         android:key="dark_ui_auto_mode"
         android:title="@string/dark_ui_auto_mode_title"
         android:summary="%s"
         android:entries="@array/dark_ui_scheduler_preference_titles"
         android:entryValues="@array/dark_ui_scheduler_preference_titles"
-        settings:allowDividerAbove="true"
         settings:controller="com.android.settings.display.darkmode.DarkModeScheduleSelectorController"
         settings:keywords="@string/keywords_dark_ui_mode"/>
 
@@ -62,6 +61,7 @@
         settings:searchable="false"
         settings:controller="com.android.settings.display.darkmode.DarkModeCustomBedtimePreferenceController" />
 
+    <!--
     <lineageos.preference.LineageSecureSettingSwitchPreference
         android:key="berry_black_theme"
         android:dependency="dark_ui_activated"
@@ -69,4 +69,9 @@
         android:summary="@string/berry_black_theme_summary"
         android:defaultValue="false"
         settings:requiresPackage="org.lineageos.overlay.customization.blacktheme" />
+    -->
+
+    <ListPreference
+        android:key="android.theme.customization.system_palette"
+        android:title="@string/style_dark_overlay_title"/>
 </PreferenceScreen>

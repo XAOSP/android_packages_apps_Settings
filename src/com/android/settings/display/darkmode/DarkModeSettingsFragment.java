@@ -19,13 +19,16 @@ import android.app.settings.SettingsEnums;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.PowerManager;
+import android.provider.Settings;
 
+import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceScreen;
 
 import com.android.settings.R;
 import com.android.settings.dashboard.DashboardFragment;
 import com.android.settings.search.BaseSearchIndexProvider;
+import com.android.settings.utils.ThemeUtils;
 import com.android.settingslib.core.AbstractPreferenceController;
 import com.android.settingslib.search.SearchIndexable;
 
@@ -36,7 +39,8 @@ import java.util.List;
  * Settings screen for Dark UI Mode
  */
 @SearchIndexable(forTarget = SearchIndexable.ALL & ~SearchIndexable.ARC)
-public class DarkModeSettingsFragment extends DashboardFragment {
+public class DarkModeSettingsFragment extends DashboardFragment implements
+        Preference.OnPreferenceChangeListener {
 
     private static final String TAG = "DarkModeSettingsFrag";
     private static final String DARK_THEME_END_TIME = "dark_theme_end_time";
@@ -47,11 +51,21 @@ public class DarkModeSettingsFragment extends DashboardFragment {
     private static final int DIALOG_START_TIME = 0;
     private static final int DIALOG_END_TIME = 1;
 
+    private ThemeUtils mThemeUtils;
+    private ListPreference mDarkModeOverlayPreference;
+    private Context mContext;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        final Context context = getContext();
-        mContentObserver = new DarkModeObserver(context);
+        mContext = getContext();
+        mContentObserver = new DarkModeObserver(mContext);
+        mThemeUtils = new ThemeUtils(mContext);
+
+        final PreferenceScreen screen = getPreferenceScreen();
+        mDarkModeOverlayPreference = screen.findPreference(ThemeUtils.DARK_THEME_KEY);
+        mDarkModeOverlayPreference.setOnPreferenceChangeListener(this);
+        updateState(mDarkModeOverlayPreference);
     }
 
     @Override
@@ -95,6 +109,32 @@ public class DarkModeSettingsFragment extends DashboardFragment {
             return true;
         }
         return super.onPreferenceTreeClick(preference);
+    }
+
+    @Override
+    public boolean onPreferenceChange(Preference preference, Object newValue) {
+        if (preference == mDarkModeOverlayPreference) {
+            Settings.System.putString(mContext.getContentResolver(),
+                    Settings.System.DARK_MODE_BACKGROUND_THEME, (String) newValue);
+            return true;
+        }
+        return false;
+    }
+
+    public void updateState(ListPreference preference) {
+        String currentPackageName = mThemeUtils.getOverlayInfos(preference.getKey()).stream()
+                .filter(info -> info.isEnabled())
+                .map(info -> info.packageName)
+                .findFirst()
+                .orElse("Default");
+
+        List<String> pkgs = mThemeUtils.getOverlayPackagesForCategory(preference.getKey());
+        List<String> labels = mThemeUtils.getLabels(preference.getKey());
+
+        preference.setEntries(labels.toArray(new String[labels.size()]));
+        preference.setEntryValues(pkgs.toArray(new String[pkgs.size()]));
+        preference.setValue("Default".equals(currentPackageName) ? pkgs.get(0) : currentPackageName);
+        preference.setSummary("Default".equals(currentPackageName) ? "Default" : labels.get(pkgs.indexOf(currentPackageName)));
     }
 
     public void refresh() {

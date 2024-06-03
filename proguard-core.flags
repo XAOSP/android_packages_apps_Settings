@@ -1,0 +1,2 @@
+# XSettings Settings
+-keep class com.x.settings.**

@@ -41,6 +41,9 @@ java_library {
     libs: [
         "app-compat-annotations",
     ],
+    optimize: {
+        proguard_flags_files: ["proguard-core.flags"],
+    },
 }
 
 android_library {
@@ -51,15 +54,24 @@ android_library {
         "SpaPrivilegedLib-defaults",
     ],
 
-    srcs: ["src/**/*.java", "src/**/*.kt"],
+    srcs: [
+        "src/**/*.java",
+        "src/**/*.kt",
+        "XSettings/src/**/*.java",
+        "XSettings/src/**/*.kt",
+    ],
     exclude_srcs: [
         "src/com/android/settings/biometrics/fingerprint2/shared/**/*.kt",
     ],
     use_resource_processor: true,
+    aaptflags: [
+        "--extra-packages com.x.settings"
+    ],
     resource_dirs: [
         "res",
         "res-export", // for external usage
         "res-product",
+        "XSettings/res",
     ],
     static_libs: [
         // External dependencies
@@ -78,6 +90,7 @@ android_library {
         "android.hardware.dumpstate-V1.1-java",
         "android.view.accessibility.flags-aconfig-java",
         "com_android_server_accessibility_flags_lib",
+        "glide",
         "net-utils-framework-common",
         "notification_flags_lib",
         "securebox",
@@ -109,6 +122,9 @@ android_library {
         "org.lineageos.platform.internal",
         "LineagePreferenceLib",
         "vendor.lineage.fastcharge-V1.0-java",
+
+        // XAOSP dependencies
+        "VendorSupport-preference",
     ],
 
     plugins: ["androidx.room_room-compiler-plugin"],
@@ -164,4 +180,9 @@ android_library_import {
 filegroup {
     name: "Settings_proguard_flags",
     srcs: ["proguard.flags"],
+}
+
+android_library_import {
+    name: "glide",
+    aars: ["libs/glide-4.16.0.aar"],
 }
